@@ -73,7 +73,7 @@ SpotDash offers the following key features:
 
 ## License
 
-SpotDash is open-source and released under the [MIT License](LICENSE.md).
+SpotDash is open-source and under the [MIT License](LICENSE.md).
 
 ## Contact
 
