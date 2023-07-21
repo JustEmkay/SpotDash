@@ -55,7 +55,6 @@ SpotDash offers the following key features:
   - Filter the map to scale up to 10km radius.
   - Select a parking area to view available and occupied spaces.
   - Obtain Google Maps directions to selected parking areas.
-  - *(Add any additional features specific to the User module)*
 
 - Managers Module:
   - Create an account as a parking area manager.
@@ -65,13 +64,11 @@ SpotDash offers the following key features:
   - Detect occupied spaces (car, motorcycle, or truck) from images.
   - Update parking space status for users to see.
   - Manually mark spaces in videos for detection and update.
-  - *(Add any additional features specific to the Managers module)*
 
 - Admin Module:
   - Use Streamlit to manage admin and manager accounts.
   - Approve manager accounts for activation.
   - Get a visualized view of user data.
-  - *(Add any additional features specific to the Admin module)*
 
 
 ## License
