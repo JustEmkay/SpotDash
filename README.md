@@ -31,9 +31,10 @@ To run SpotDash locally, make sure you have the following dependencies installed
 - Streamlit
 - Flask
 - TailwindCSS
-- Sqlite3 (Database)
+- Sqlite3 (Database)(Sqlite3 Database not included)
 
 For enhanced performance (GPU support), use `tensorflow-gpu` if you have a compatible GPU.
+
 
 ### Download Mask R-CNN Model
 
