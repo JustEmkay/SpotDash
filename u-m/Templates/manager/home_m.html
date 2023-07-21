@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manager-Page</title>
+    <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- <link href="https://cdn.jsdelivr.net/npm/daisyui@3.1.10/dist/full.css" rel="stylesheet" type="text/css" /> -->
+
+  </head>
+  <body class="bg-white text-black">
+    <header class="flex justify-between items-center bg-gray-200 py-4 px-6">
+      <h1 class="text-xl font-bold">PSDS-Manager</h1>
+      <div>
+      <a class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" href="{{url_for('delete_account_m')}}" class="button">Delete Account</a>
+      <button
+        class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+      >
+      <a href="/manager/logout">Logout</a>
+      </button>
+    </div>
+    </header>
+
+    <main class="container  p-5 h-auto mx-auto my-8">
+        
+      <div class="flex justify-between items-start mb-8 h-120 ">
+        <div class="w-full flex bg-gray-100 p-4 h-full ">
+          <div class="flex-col justify-between w-1/2 h-full ">
+            <div class="h-full text-3xl">
+            <h1 class=" font-bold pb-1">Welcome Manager,</h1>
+            <br>
+            <p>Manager :<label class="font-medium">{{manager[1]}}</label></p>
+            <p>Manager id :<label class="font-medium">{{manager[0]}}</label></p>
+            <p>Parking name :<label class="font-medium">{{manager[2]}}</label></p>
+            <p>Location:<label class="font-medium">{{location.get('latitude')}},{{location.get('longitude')}}</label></p>
+            <br>
+            {%if slot1.get('t1') == 0 and slot2.get('t1') ==0:%}
+            <p class="text-2xl text-red-600 mt-4 font-bold">SPACE AVAILABLE NOT DEFINED PLEASE UPDATE VALUES</p>
+            {%elif slot1.get('t1') != 0 or slot2.get('t1') !=0:%}
+            <fieldset class="border border-2 border-black w-2/3 p-4">
+            <legend class="text-2xl my-2 font-bold">Total Space Available:{{slot1.get('t1')+slot2.get('t1')}}</legend>
+            <p class="text-xl my-2 font-bold">Total Space Available For Cars:{{slot1.get('tc')+slot2.get('tc')}}</p>
+            <p class="text-xl my-2 font-bold">Total Space Available For Trucks:{{slot1.get('tt')+slot2.get('tt')}}</p>
+            <p class="text-xl my-2 font-bold">Total Space Available For Motorcycle:{{slot1.get('tmc')+slot2.get('tmc')}}</p>
+          </fieldset>
+            {% endif %}
+            </div>
+
+            <fieldset class="h-auto w-1/2 border border-1 border-black p-4">
+              <legend>Detection From Video</legend>
+              <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{{ url_for('video_detection') }}" class="button">Detect</a>
+              <sub class="font-medium text-red-500">Warning:Cant detect vehicle type</sub>
+            </fieldset>
+
+
+          </div>
+
+          <div class="w-1/2 h-full bg-gray-300 p-2">
+              <div class="h-full max-w-full bg-gray-400">
+                {{ map3 | safe }}  
+              </div>
+              <form class="my-2 p-1" method="post" action="{{ url_for('update_location_m') }}">
+                <fieldset class="border border-1 border-black p-4">
+                  <legend class="ml-4 font-bold">Enter location to update:</legend>
+                  <input class="p-1" type="text" placeholder="latitude" name="lat" required>
+                  <input class="p-1" type="text" placeholder="longitude" name="lng" required>
+                  <input type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                </fieldset>
+                </form>
+          </div>
+        </div>
+                
+      </div>
+    <div class="flex gap-1 justify-between w-full">
+      <div class="flex gap-1 h-auto w-full justify-between">
+        <!-- Update -->
+      <div class="relative flex  w-96 flex-col rounded-xl bg-white bg-clip-border text-gray-700 ">
+        <div class="relative mx-4 mt-4 overflow-hidden rounded-xl bg-white bg-clip-border text-gray-700 ">
+          {%if slot1.get('t1') == 0 :%}
+          <p>Please Upload your Image!!</p>
+          {%elif slot1.get('t1') != 0 :%}
+          <img src="data:image/jpg;base64,{{ images[0] }}" alt="profile-picture" />
+          {% endif %}
+        </div>
+        <div class="p-6 text-center">
+          <h4 class="mb-2 block font-sans text-2xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
+            Parking Section-1
+          </h4>
+          <p class="block bg-gradient-to-tr from-blue-600 to-blue-400 bg-clip-text font-sans text-base font-medium leading-relaxed text-transparent antialiased">
+            Upload / Update
+            <form id="s1" class="border text-left border-1 p-4" method="post" action="{{ url_for('update_slot_1') }}">
+              <table>
+                  <p class="text-sm text-red-600">Enter the number of Space available for each of vehicle type:</p>
+                  <tr>
+                      <td>Cars</td>
+                      <td>:<input class="bg-white" id="tc" type="number" name="tc"></td>
+                  </tr>
+                  <tr>
+                      <td>Trucks</td>
+                      <td>:<input class="bg-white" id="tt" type="number" name="tt"></td>
+                  </tr>
+                  <tr>
+                      <td>Motorcycle</td>
+                      <td>:<input class="bg-white" id="tm" type="number" name="tm"></td>
+                  </tr>
+                  <tr>
+                      <td></td>
+                      <td><button class="text-blue-700 font-bold border border-blue-700 rounded-full px-2" type="submit">update</button></td>
+                  </tr>
+              </table>
+              
+              </form>
+
+              
+              <form class="p-4" method="POST" action="{{ url_for('upload_image_1') }}" enctype="multipart/form-data" >
+                  <input class="py-1" type="file" name="image" required>
+                  <button class="text-blue-700 font-bold border border-blue-700 rounded-full px-2" type="submit">Upload</button>
+              </form>
+          </p>
+        </div>
+      </div>
+      <!-- Status -->
+      <div class="bg-grey-400 w-1/2 lg:card-side bg-base-100">
+        <div class="relative flex w-full max-w-[20rem] flex-col rounded-xl bg-gradient-to-tr from-blue-600 to-blue-400 bg-clip-border p-8 text-white shadow-md">
+          {%if slot1.get('t1') == 0 :%}
+            <p class="text-2xl text-white mt-4 font-bold">SLOT NOT DEFINED. PLEASE UPDATE SLOT!!</p>
+          {%elif slot1.get('t1') != 0 :%}
+          <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
+              Car
+            </p>
+            <h1 class="mt-6 flex justify-center gap-1 font-sans text-7xl font-normal tracking-normal text-white antialiased">
+              {{slot1.get('car')}}
+              <span class="self-end text-4xl">/{{slot1.get('tc')}}</span>
+            </h1>
+          </div>
+          <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
+              Truck
+            </p>
+            <h1 class="mt-6 flex justify-center gap-1 font-sans text-7xl font-normal tracking-normal text-white antialiased">
+              {{slot1.get('truck')}}
+              <span class="self-end text-4xl">/{{slot1.get('tt')}}</span>
+            </h1>
+          </div>
+          <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
+              Motorcycle
+            </p>
+            <h1 class="mt-6 flex justify-center gap-1 font-sans text-7xl font-normal tracking-normal text-white antialiased">
+              {{slot1.get('motorcycle')}}
+              <span class="self-end text-4xl">/{{slot1.get('tt')}}</span>
+            </h1>
+          </div>
+          <div class="mt-12 p-0">
+            <button
+              class="block w-full select-none rounded-lg bg-white py-3.5 px-7 text-center align-middle font-sans text-sm font-bold uppercase text-blue-500 shadow-md shadow-blue-gray-500/10 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-gray-500/20 focus:scale-[1.02] focus:opacity-[0.85] focus:shadow-none active:scale-100 active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+              data-ripple-dark="true"
+            >
+            <a href="/manager/detect?slot=slot1">Detect</a>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+      </div> 
+      </div>
+
+
+
+      <div class="flex gap-1 h-auto w-full justify-between">
+      
+      <div class="relative flex  w-96 flex-col rounded-xl bg-white bg-clip-border text-gray-700 ">
+        <div class="relative mx-4 mt-4 overflow-hidden rounded-xl bg-white bg-clip-border text-gray-700 ">
+          {%if slot2.get('t1') == 0 :%}
+          <p>Please Upload your Image!!</p>
+          {%elif slot2.get('t1') != 0 :%}
+          <img src="data:image/jpg;base64,{{ images[1] }}" alt="profile-picture" />
+          {% endif %}
+        </div>
+        <div class="p-6 text-center">
+          <h4 class="mb-2 block font-sans text-2xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
+            Parking Section-2
+          </h4>
+          <p class="block bg-gradient-to-tr from-blue-600 to-blue-400 bg-clip-text font-sans text-base font-medium leading-relaxed text-transparent antialiased">
+            Upload / Update
+            <form id="s1" class="border text-left border-1 p-4" method="post" action="{{ url_for('update_slot_2') }}">
+              <table>
+                  <p class="text-sm text-red-600">Enter the number of Space available for each of vehicle type:</p>
+                  <tr>
+                      <td>Cars</td>
+                      <td>:<input class="bg-white" id="tc2" type="number" name="tc2"></td>
+                  </tr>
+                  <tr>
+                      <td>Trucks</td>
+                      <td>:<input class="bg-white" id="tt2" type="number" name="tt2"></td>
+                  </tr>
+                  <tr>
+                      <td>Motorcycle</td>
+                      <td>:<input class="bg-white" id="tm2" type="number" name="tm2"></td>
+                  </tr>
+                  <tr>
+                      <td></td>
+                      <td><button class="text-blue-700 font-bold border border-blue-700 rounded-full px-2" type="submit">update</button></td>
+                  </tr>
+              </table>
+              
+              </form>
+
+              
+              <form class="p-4" method="POST" action="{{ url_for('upload_image_2') }}" enctype="multipart/form-data">
+                  <input class="py-1" type="file" name="image2" required>
+                  <button class="text-blue-700 font-bold border border-blue-700 rounded-full px-2" type="submit">Upload</button>
+              </form>
+          </p>
+        </div>
+      </div>
+     
+      <div class="bg-grey-400 w-1/2 lg:card-side bg-base-100">
+        <div class="relative flex w-full max-w-[20rem] flex-col rounded-xl bg-gradient-to-tr from-blue-600 to-blue-400 bg-clip-border p-8 text-white ">
+          {%if slot2.get('t1') == 0 :%}
+            <p class="text-2xl text-white mt-4 font-bold">SLOT NOT DEFINED. PLEASE UPDATE SLOT!!</p>
+          {%elif slot2.get('t1') != 0 :%}
+          <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
+              Car
+            </p>
+            <h1 class="mt-6 flex justify-center gap-1 font-sans text-7xl font-normal tracking-normal text-white antialiased">
+              {{slot2.get('car')}}
+              <span class="self-end text-4xl">/{{slot2.get('tc')}}</span>
+            </h1>
+          </div>
+          <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
+              Truck
+            </p>
+            <h1 class="mt-6 flex justify-center gap-1 font-sans text-7xl font-normal tracking-normal text-white antialiased">
+              {{slot2.get('truck')}}
+              <span class="self-end text-4xl">/{{slot2.get('tt')}}</span>
+            </h1>
+          </div>
+          <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
+              Motorcycle
+            </p>
+            <h1 class="mt-6 flex justify-center gap-1 font-sans text-7xl font-normal tracking-normal text-white antialiased">
+              {{slot2.get('motorcycle')}}
+              <span class="self-end text-4xl">/{{slot2.get('tt')}}</span>
+            </h1>
+          </div>
+          <div class="mt-12 p-0">
+            <button
+              class="block w-full select-none rounded-lg bg-white py-3.5 px-7 text-center align-middle font-sans text-sm font-bold uppercase text-blue-500 shadow-md shadow-blue-gray-500/10 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-gray-500/20 focus:scale-[1.02] focus:opacity-[0.85] focus:shadow-none active:scale-100 active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+              data-ripple-dark="true"
+            >
+            <a href="/manager/detect?slot=slot2">Detect</a>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+      </div> 
+      </div>
+
+    </div>
+    
+
+      </div>
+    </main>
+
+    <footer class="bg-gray-200 h-auto w-full py-4 px-6 text-center">
+      <p class="text-gray-600">© 2023 Your Company. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

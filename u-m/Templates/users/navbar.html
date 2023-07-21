@@ -1,0 +1,18 @@
+<div class="w-full bg-gray-200">
+    <nav class="container relative flex flex-wrap items-center justify-between p-4 mx-auto lg:p-8 xl:px-4">
+      <p class="text-xl font-bold">Parking Space Detection</p>
+      <div class="flex justify-between gap-4">
+        <ul class="flex items-center gap-2">
+          <li {% if active_page == 'home' %} class="active"{% endif %}>
+            <a class="hover:text-blue-800" href="/">Home</a>
+          </li>
+          <li {% if active_page == 'profile' %} class="active"{% endif %}>
+            <a class="hover:text-blue-800" href="/profile">Profile</a>
+          </li>
+        </ul>
+        
+          <a  class="border text-white bg-blue-400 border-white hover:bg-red-600 rounded p-1 border-1" href="/logout">Logout</a>
+       
+      </div>
+    </nav>
+  </div>

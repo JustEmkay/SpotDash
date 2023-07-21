@@ -1,0 +1,26 @@
+{% extends 'index.html' %} 
+{% block content %}
+<div class="h-screen">
+    <div class="flex items-center justify-center h-screen bg-cover bg-center" style="background-image: url('https://b.kisscc0.com/20180517/rhq/kisscc0-parking-transport-car-park-house-traffic-5afd7a09a9a3a4.2002531015265612896949.jpg');">
+      <div class="transform -rotate-90 bg-red-600 text-white font-bold rounded-t-xl py-2 px-5">Profile</div>
+      <div class="flex border-2 rounded-3xl border-gray-200 items-center justify-between bg-white w-1/3 shadow-2xl">
+        
+        <div class="flex justify-center rounded-3xl items-center bg-white w-1/3 h-96">
+            <img class="h-36 border-4 border-black rounded-full" src="https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg">
+        </div>
+        <div class="flex items-center w-2/3 h-96 rounded-3xl bg-gray-300">
+          <fieldset class=" w-full m-4 border p-1 rounded-xl border-white flex-col gap-4 font-bold">
+            <legend class="uppercase font-black">{{username}}</legend>
+            <p>Email : {{profile[0]}}</p>
+            <p>Vehicle : {{profile[1]}}</p>
+            <div class="my-2 flex justify-end">
+              <button><a  title="Dont" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" href="#">delete your account</a></button>
+            </div>
+          </fieldset>
+
+        </div>
+      </div>
+  </div>  
+</div>
+
+{% endblock %}
