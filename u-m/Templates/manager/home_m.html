@@ -10,12 +10,11 @@
   />
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- <link href="https://cdn.jsdelivr.net/npm/daisyui@3.1.10/dist/full.css" rel="stylesheet" type="text/css" /> -->
 
   </head>
   <body class="bg-white text-black">
     <header class="flex justify-between items-center bg-gray-200 py-4 px-6">
-      <h1 class="text-xl font-bold">PSDS-Manager</h1>
+      <h1 class="text-xl font-bold">SpotDash-Manager</h1>
       <div>
       <a class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" href="{{url_for('delete_account_m')}}" class="button">Delete Account</a>
       <button
@@ -29,10 +28,10 @@
     <main class="container  p-5 h-auto mx-auto my-8">
         
       <div class="flex justify-between items-start mb-8 h-120 ">
-        <div class="w-full flex bg-gray-100 p-4 h-full ">
+        <div class="w-full flex bg-gray-200 rounded-xl shadow p-4 h-full ">
           <div class="flex-col justify-between w-1/2 h-full ">
             <div class="h-full text-3xl">
-            <h1 class=" font-bold pb-1">Welcome Manager,</h1>
+            <h1 class="text-4xl font-bold pb-1">Welcome Manager,</h1>
             <br>
             <p>Manager :<label class="font-medium">{{manager[1]}}</label></p>
             <p>Manager id :<label class="font-medium">{{manager[0]}}</label></p>
@@ -42,7 +41,7 @@
             {%if slot1.get('t1') == 0 and slot2.get('t1') ==0:%}
             <p class="text-2xl text-red-600 mt-4 font-bold">SPACE AVAILABLE NOT DEFINED PLEASE UPDATE VALUES</p>
             {%elif slot1.get('t1') != 0 or slot2.get('t1') !=0:%}
-            <fieldset class="border border-2 border-black w-2/3 p-4">
+            <fieldset class="border border-2 border-gray-400 w-2/3 rounded-xl p-4">
             <legend class="text-2xl my-2 font-bold">Total Space Available:{{slot1.get('t1')+slot2.get('t1')}}</legend>
             <p class="text-xl my-2 font-bold">Total Space Available For Cars:{{slot1.get('tc')+slot2.get('tc')}}</p>
             <p class="text-xl my-2 font-bold">Total Space Available For Trucks:{{slot1.get('tt')+slot2.get('tt')}}</p>
@@ -51,8 +50,8 @@
             {% endif %}
             </div>
 
-            <fieldset class="h-auto w-1/2 border border-1 border-black p-4">
-              <legend>Detection From Video</legend>
+            <fieldset class="h-auto w-1/2 border border-2 border-gray-400 p-4 rounded-xl">
+              <legend><b>Detection From Video</b></legend>
               <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{{ url_for('video_detection') }}" class="button">Detect</a>
               <sub class="font-medium text-red-500">Warning:Cant detect vehicle type</sub>
             </fieldset>
@@ -60,12 +59,12 @@
 
           </div>
 
-          <div class="w-1/2 h-full bg-gray-300 p-2">
-              <div class="h-full max-w-full bg-gray-400">
+          <div class="w-1/2 h-full bg-blue-300 rounded-xl p-2">
+              <div class="h-full max-w-full bg-gray-400 rounded-xl">
                 {{ map3 | safe }}  
               </div>
               <form class="my-2 p-1" method="post" action="{{ url_for('update_location_m') }}">
-                <fieldset class="border border-1 border-black p-4">
+                <fieldset class="border border-1 border-white p-4">
                   <legend class="ml-4 font-bold">Enter location to update:</legend>
                   <input class="p-1" type="text" placeholder="latitude" name="lat" required>
                   <input class="p-1" type="text" placeholder="longitude" name="lng" required>
@@ -77,7 +76,7 @@
                 
       </div>
     <div class="flex gap-1 justify-between w-full">
-      <div class="flex gap-1 h-auto w-full justify-between">
+      <div class="flex gap-1 border border-2 shadow-xl rounded-2xl h-auto w-full justify-between">
         <!-- Update -->
       <div class="relative flex  w-96 flex-col rounded-xl bg-white bg-clip-border text-gray-700 ">
         <div class="relative mx-4 mt-4 overflow-hidden rounded-xl bg-white bg-clip-border text-gray-700 ">
@@ -173,7 +172,7 @@
 
 
 
-      <div class="flex gap-1 h-auto w-full justify-between">
+      <div class="flex gap-1 border border-2 shadow-xl rounded-2xl h-auto w-full justify-between">
       
       <div class="relative flex  w-96 flex-col rounded-xl bg-white bg-clip-border text-gray-700 ">
         <div class="relative mx-4 mt-4 overflow-hidden rounded-xl bg-white bg-clip-border text-gray-700 ">

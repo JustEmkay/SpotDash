@@ -29,31 +29,36 @@ if not os.path.exists(DB_NAME):
     
 g = geocoder.ip('me')
 
-@app.route('/login',methods=['POST'])
+@app.route('/login',methods=['GET','POST'])
 def login():
     if request.method == 'POST':
         email=request.form['email']
         password=request.form['password']
         
-    if email=='admin@admin' and password=='admin':
-        session['admin']=True
-        return render_template('manager/index.html',admin=True)
+    # if email=='admin@admin' and password=='admin':
+    #     session['admin']=True
+    #     return render_template('manager/index.html',admin=True)
         
-    conn=sqlite3.connect(DB_NAME)
-    c=conn.cursor()
-    c.execute("select * from accounts where email=? and password=?",(email,password))
-    account=c.fetchone()
-    conn.close()
-    
-    if account is not None and email == account[2] and password == account[1]:
-        session['email']=account[2]
-        session['username']=account[0]
-        print(f"session username={session['username']}\nsession email={session['email']}")
-        # return render_template('users/home.html',username=session['username'],email=session['email'],active_page='home')
-        return redirect(url_for('index'))
-    else:
-        print("Couldn't find email and password")
-        return redirect(url_for('index'))
+        conn=sqlite3.connect(DB_NAME)
+        c=conn.cursor()
+        c.execute("select * from accounts where email=? and password=?",(email,password))
+        account=c.fetchone()
+        conn.close()
+        
+        if account is not None and email == account[2] and password == account[1]:
+            session['email']=account[2]
+            session['username']=account[0]
+            print(f"session username={session['username']}\nsession email={session['email']}")
+            # return render_template('users/home.html',username=session['username'],email=session['email'],active_page='home')
+            return redirect(url_for('index'))
+        else:
+            print("Couldn't find email and password")
+            return redirect(url_for('index'))
+
+@app.route('/to-login')
+def to_login():
+    return render_template('login.html')
+         
          
 def locate(items): #home-map
     red_marker_coords = (g.lat,g.lng)
@@ -112,8 +117,8 @@ def locate_parking(latitude,longitude,name): #parking-map
 @app.route('/',methods=['GET','POST'])
 def index():
    
-    if session.get('admin'):
-        return render_template('manager/index.html')
+    # if session.get('admin'):
+    #     return render_template('manager/index.html')
     if session.get('username'):
         d=1
         if request.method == 'POST':
@@ -161,7 +166,7 @@ def index():
         
         return render_template('users/home.html',username=session['username'],items=items,d=d,map=m)
 
-    return render_template('login.html')
+    return render_template('welcome.html')
     
 @app.route('/filter',methods=['GET'])
 def filter():
@@ -176,7 +181,7 @@ def profile():
     
     conn=sqlite3.connect(DB_NAME)
     c=conn.cursor()
-    c.execute("select email,vtype from accounts")
+    c.execute("select email,vtype from accounts where username=?",(session['username'],))
     profile=c.fetchone()
     conn.close()
     
@@ -310,6 +315,10 @@ def home():
 
 @app.route('/manager/home',methods=['GET','POST'])
 def home_m():
+    if session.get('mid') is None :
+        return render_template('login.html')
+    
+    
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("SELECT * FROM managers WHERE mid=?", (session['mid'],))
@@ -559,12 +568,34 @@ def delete_account_m():
             cursor.execute("DELETE FROM managers WHERE mid = ?", (session['mid'],))
             conn.commit()
             conn.close()
+            session.pop('mid', None)
+            session.pop('mname',None)
             return render_template('success.html') 
     return render_template('manager/delete.html')
 
+
+@app.route('/users/delete_account',methods=['GET','POST'])       
+def delete_account():
+    if request.method == 'POST':
+
+        passw = request.form['pass']
+        repassw = request.form['repass']
+    
+        print(passw,repassw)
+        
+        if passw == repassw:
+            time.sleep(5)
+            conn = sqlite3.connect(DB_NAME)
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM accounts WHERE username = ?", (session['username'],))
+            conn.commit()
+            conn.close()
+            session.pop('username', None)
+            return render_template('success.html') 
+    return render_template('users/delete.html')
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'mp4', 'avi', 'mov'}
-
 
 UPLOAD_FOLDER = 'Static/Video'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
