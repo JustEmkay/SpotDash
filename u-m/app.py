@@ -196,9 +196,9 @@ def map_page():
         address=request.form['address']
         conn=sqlite3.connect(DB_NAME)
         c=conn.cursor()
-        c.execute("SELECT parking_name,parking_loc,slot1,slot2 FROM managers WHERE parking_name=? AND approval = 1",(mid,))
+        c.execute("SELECT parking_name,parking_loc,slot1,slot2 FROM managers WHERE mid=? AND approval = 1",(mid,))
         lists=c.fetchone()
-        conn.close()
+        # conn.close()
         jmdata = json.loads(lists[1])
         js1data = json.loads(lists[2])
         js2data = json.loads(lists[3])
@@ -212,10 +212,33 @@ def map_page():
         geolocator = Nominatim(user_agent='http')
         location = geolocator.reverse((latitude,longitude))
         mapl=locate_parking(latitude,longitude,lists[0])
-        
         print(location)
+        print(mid)
+        c.execute("SELECT s1_predict,s2_predict FROM parking_data WHERE manager_id =?", (mid,))
+        images = c.fetchone()
+        # print("images",images)
+        conn.close()
+
+        decoded_images = []
+        if images is not None:
+            print("working image")
+            if images[0] is not None:
+                print("working image0")
+                img_data1 = base64.b64encode(images[0]).decode('utf-8')
+                decoded_images.append(img_data1)
+            else:
+                decoded_images.append('')
+            
+            if images[1] is not None:
+                print("working image1")
+                img_data2 = base64.b64encode(images[1]).decode('utf-8')
+                decoded_images.append(img_data2)
+            else:
+                decoded_images.append('')
+        else:
+            decoded_images = ['', '']  # Assign empty values for images when no record is found
         
-        return render_template('users/map.html', id=mid,address=location,items=items,direction_link=direction_link,mapl=mapl,s1=js1data,s2=js2data)
+        return render_template('users/map.html', id=mid,address=location,items=items,direction_link=direction_link,mapl=mapl,s1=js1data,s2=js2data,images=decoded_images)
     return redirect(url_for('index'))
 
 
@@ -411,6 +434,8 @@ def update_slot_2():
         print(tc2,tt2,tm2)
         truck2=int(tt2) 
         data={'t1': int(tc2)+int(tt2)+int(tm2), 'tmc': int(tm2), 'tc': int(tc2), 'tt': truck2, 'motorcycle': 0, 'car': 0, 'truck': 0}
+        
+        
         jdata = json.dumps(data)
 
         conn = sqlite3.connect(DB_NAME)
@@ -531,7 +556,14 @@ def detect_submit():
                 jslots['car'] = int(car)
                 jslots['truck'] = int(truck)
                 new_slot_data = json.dumps(jslots)
+                image_path = os.path.join(app.static_folder, 'images', 'predict1', 'predict1.jpg')
+                with open(image_path, 'rb') as image_file:
+                    image_data = image_file.read()
+                cursor.execute("UPDATE parking_data SET s1_predict=? WHERE manager_id=?", (image_data, session['mid']))
+                conn.commit()
+
                 cursor.execute("UPDATE managers SET slot1=? WHERE mid=?", (new_slot_data, session['mid']))
+                conn.commit()
             elif slot == 'slot2':
                 cursor.execute("SELECT slot2 FROM managers WHERE mid=?", (session['mid'],))
                 slot_data = cursor.fetchone()
@@ -541,7 +573,7 @@ def detect_submit():
                 jslots['truck'] = int(truck)
                 new_slot_data = json.dumps(jslots)
                 cursor.execute("UPDATE managers SET slot2=? WHERE mid=?", (new_slot_data, session['mid']))
-            conn.commit()
+                conn.commit()
             flash("Slot data updated successfully.")
         except Exception as e:
             print(e)

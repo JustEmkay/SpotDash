@@ -24,7 +24,7 @@ class="relative bg-cover bg-center bg-no-repeat" style="background-image: url('h
     </h1>
 
     <p class="mt-4 max-w-lg sm:text-xl/relaxed">
-      Deletct Every parking lots available in your area Here!
+      Detect Every parking lots available in your area!
     </p>
 
     <div class="mt-8 flex flex-wrap gap-4 text-center">
@@ -79,7 +79,7 @@ class="relative bg-cover bg-center bg-no-repeat" style="background-image: url('h
               <div class="flex items-center">
                 <form method="post" action="{{ url_for('map_page') }}">
                   <input type="hidden" name="address" value={{item[2]}}>
-                  <button type="submit" name="mid" value={{item[1]}} class="text-blue-600 font-bold hover:underline hover:text-blue-800" >view</button>
+                  <button type="submit" name="mid" value={{item[0]}} class="text-blue-600 font-bold hover:underline hover:text-blue-800" >view</button>
                 </form>
               </div>
             </div>
