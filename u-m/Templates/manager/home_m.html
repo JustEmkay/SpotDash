@@ -34,7 +34,7 @@
             <h1 class="text-4xl font-bold pb-1">Welcome Manager,</h1>
             <br>
             <p>Manager :<label class="font-medium">{{manager[1]}}</label></p>
-            <p>Manager id :<label class="font-medium">{{manager[0]}}</label></p>
+            <!-- <p>Manager id :<label class="font-medium">{{manager[0]}}</label></p> -->
             <p>Parking name :<label class="font-medium">{{manager[2]}}</label></p>
             <p>Location:<label class="font-medium">{{location.get('latitude')}},{{location.get('longitude')}}</label></p>
             <br>
@@ -43,9 +43,9 @@
             {%elif slot1.get('t1') != 0 or slot2.get('t1') !=0:%}
             <fieldset class="border border-2 border-gray-400 w-2/3 rounded-xl p-4">
             <legend class="text-2xl my-2 font-bold">Total Space Available:{{slot1.get('t1')+slot2.get('t1')}}</legend>
-            <p class="text-xl my-2 font-bold">Total Space Available For Cars:{{slot1.get('tc')+slot2.get('tc')}}</p>
-            <p class="text-xl my-2 font-bold">Total Space Available For Trucks:{{slot1.get('tt')+slot2.get('tt')}}</p>
-            <p class="text-xl my-2 font-bold">Total Space Available For Motorcycle:{{slot1.get('tmc')+slot2.get('tmc')}}</p>
+            <p class="text-xl my-2 font-bold">For Cars:{{slot1.get('tc')+slot2.get('tc')}}</p>
+            <p class="text-xl my-2 font-bold">For Trucks:{{slot1.get('tt')+slot2.get('tt')}}</p>
+            <p class="text-xl my-2 font-bold">For Motorcycle:{{slot1.get('tmc')+slot2.get('tmc')}}</p>
           </fieldset>
             {% endif %}
             </div>
@@ -55,7 +55,13 @@
               <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{{ url_for('video_detection') }}" class="button">Detect</a>
               <sub class="font-medium text-red-500">Warning:Cant detect vehicle type</sub>
             </fieldset>
+            <fieldset class="h-auto w-1/2 border border-2 border-gray-400 p-4 rounded-xl">
+              <legend><b>Clear Sections</b></legend>
 
+              <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{{ url_for('reset_section1') }}" class="button">Reset Section1</a>
+              <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{{ url_for('reset_section2') }}" class="button">Reset Section2</a>
+              <sub class="font-medium text-red-500"><br>Option to reset section-1 & section-2</sub>
+            </fieldset>
 
           </div>
 
@@ -130,6 +136,7 @@
             <p class="text-2xl text-white mt-4 font-bold">SLOT NOT DEFINED. PLEASE UPDATE SLOT!!</p>
           {%elif slot1.get('t1') != 0 :%}
           <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="font-bold">Detected-vehicle</p>
             <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
               Car
             </p>
@@ -226,6 +233,7 @@
             <p class="text-2xl text-white mt-4 font-bold">SLOT NOT DEFINED. PLEASE UPDATE SLOT!!</p>
           {%elif slot2.get('t1') != 0 :%}
           <div class="relative m-0 mb-8 overflow-hidden rounded-none border-b border-white/10 bg-transparent bg-clip-border pb-8 text-center text-gray-700 shadow-none">
+            <p class="font-bold">Detected-vehicle</p>
             <p class="block font-sans text-sm font-normal uppercase leading-normal text-white antialiased">
               Car
             </p>
@@ -273,7 +281,7 @@
     </main>
 
     <footer class="bg-gray-200 h-auto w-full py-4 px-6 text-center">
-      <p class="text-gray-600">© 2023 Your Company. All rights reserved.</p>
+      <p class="text-gray-600">Created by @JustEmkay</p>
     </footer>
   </body>
 </html>

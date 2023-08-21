@@ -49,6 +49,7 @@ def login():
             session['email']=account[2]
             session['username']=account[0]
             print(f"session username={session['username']}\nsession email={session['email']}")
+            session['d']=1
             # return render_template('users/home.html',username=session['username'],email=session['email'],active_page='home')
             return redirect(url_for('index'))
         else:
@@ -102,10 +103,10 @@ def locate_parking(latitude,longitude,name): #parking-map
     # Create a Folium map centered on the red marker location
     map2 = folium.Map(location=green_marker, zoom_start=40)
 
-    # Add a red marker for the current location
+
     folium.Marker(
         location=green_marker,
-        # Adjust the radius to your desired size
+
         popup=f"{name}",
         icon=folium.Icon(color="green", icon="ok-sign")
     ).add_to(map2)
@@ -120,12 +121,12 @@ def index():
     # if session.get('admin'):
     #     return render_template('manager/index.html')
     if session.get('username'):
-        d=1
+        
         if request.method == 'POST':
             D=request.form['filter_range']
-            d=float(D)
-            print("new d=",d)
-        
+            session['d']=float(D)
+            # print("new d=",d)
+        d=session['d']
         
         g = geocoder.ip('me')
         print(g.latlng)        
@@ -192,7 +193,9 @@ def map_page():
     items=[]
     if request.method == 'POST':
         mid=request.form['mid']
+        pname=request.form['pname']
         print("mid:",mid)
+        print("pname:",pname)
         address=request.form['address']
         conn=sqlite3.connect(DB_NAME)
         c=conn.cursor()
@@ -237,8 +240,9 @@ def map_page():
                 decoded_images.append('')
         else:
             decoded_images = ['', '']  # Assign empty values for images when no record is found
+            
         
-        return render_template('users/map.html', id=mid,address=location,items=items,direction_link=direction_link,mapl=mapl,s1=js1data,s2=js2data,images=decoded_images)
+        return render_template('users/map.html', pname=pname,id=mid,address=location,items=items,direction_link=direction_link,mapl=mapl,s1=js1data,s2=js2data,images=decoded_images)
     return redirect(url_for('index'))
 
 
@@ -246,13 +250,17 @@ def map_page():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return redirect('/')
+    flash(f"logout successful")
+    # return redirect('/')
+    return redirect(url_for('index'))
 
 @app.route('/manager/logout')
 def admin_logout():
     session.pop('mid', None)
     session.pop('mname',None)
-    return redirect('/')
+    flash(f"logout successful")
+    # return redirect('/')
+    return redirect(url_for('index'))
     
 @app.route('/register',methods=['GET','POST'])
 def register():
@@ -267,7 +275,9 @@ def register():
         c.execute("INSERT INTO accounts VALUES (?,?,?,?)",(username,password,email,vtype))
         conn.commit()
         conn.close()
-        return render_template('success.html')
+        flash(f"Account creation completed successfully. Please login using user login.")
+        # return render_template('success.html')
+        return redirect(url_for('index'))
     
     return render_template('register.html')
 
@@ -295,7 +305,7 @@ def register_m():
         conn.commit()
         conn.close()
         flash(f"Account creation completed successfully. Please contact the admin for approval: example@gmail.com")
-        # return render_template('success.html')
+
         return redirect(url_for('index'))
     
     return render_template('/manager/register_m.html')
@@ -564,6 +574,8 @@ def detect_submit():
 
                 cursor.execute("UPDATE managers SET slot1=? WHERE mid=?", (new_slot_data, session['mid']))
                 conn.commit()
+                
+                
             elif slot == 'slot2':
                 cursor.execute("SELECT slot2 FROM managers WHERE mid=?", (session['mid'],))
                 slot_data = cursor.fetchone()
@@ -572,8 +584,16 @@ def detect_submit():
                 jslots['car'] = int(car)
                 jslots['truck'] = int(truck)
                 new_slot_data = json.dumps(jslots)
+                image_path = os.path.join(app.static_folder, 'images', 'predict2', 'predict2.jpg')
+                with open(image_path, 'rb') as image_file:
+                    image_data = image_file.read()
+                cursor.execute("UPDATE parking_data SET s2_predict=? WHERE manager_id=?", (image_data, session['mid']))
+                conn.commit()
+                
                 cursor.execute("UPDATE managers SET slot2=? WHERE mid=?", (new_slot_data, session['mid']))
                 conn.commit()
+                
+                
             flash("Slot data updated successfully.")
         except Exception as e:
             print(e)
@@ -710,6 +730,46 @@ def ocv_submit():
         insert_image_to_db(DB_NAME, image_data)
 
         return redirect(url_for('home_m'))
+    
+@app.route('/manager/reset/section1',methods = ['GET','POST'])
+def reset_section1():
+
+    conn = sqlite3.connect(DB_NAME)
+    c=conn.cursor()
+    data1={'t1':0, 'tmc':0, 'tc':0, 'tt':0, 'motorcycle':0, 'car':0, 'truck':0}
+    jdata1 = json.dumps(data1)
+    c.execute("UPDATE managers SET slot1=? WHERE mid=?",(jdata1,session['mid']))
+    conn.commit()
+    print("manager update working")
+    c.execute("UPDATE parking_data SET s1photo=NULL WHERE manager_id=?",(session['mid'],))
+    print("parkingdata photo update working")
+    conn.commit()
+    c.execute("UPDATE parking_data SET s1_predict=NULL WHERE manager_id=?",(session['mid'],))
+    print("parkingdata predict update working")
+    conn.commit()
+
+    conn.close()
+    return redirect(url_for('home_m'))
+      
+@app.route('/manager/reset/section2',methods = ['GET','POST'])
+def reset_section2():
+
+    conn = sqlite3.connect(DB_NAME)
+    c=conn.cursor()
+    data1={'t1':0, 'tmc':0, 'tc':0, 'tt':0, 'motorcycle':0, 'car':0, 'truck':0}
+    jdata1 = json.dumps(data1)
+    c.execute("UPDATE managers SET slot2=? WHERE mid=?",(jdata1,session['mid']))
+    conn.commit()
+    print("manager update working")
+    c.execute("UPDATE parking_data SET s2photo=NULL WHERE manager_id=?",(session['mid'],))
+    print("parkingdata photo update working")
+    conn.commit()
+    c.execute("UPDATE parking_data SET s2_predict=NULL WHERE manager_id=?",(session['mid'],))
+    print("parkingdata predict update working")
+    conn.commit()
+
+    conn.close()
+    return redirect(url_for('home_m'))  
        
 if __name__ == '__main__':
     app.run(debug=True,port=8080)

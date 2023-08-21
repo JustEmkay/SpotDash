@@ -79,6 +79,7 @@ class="relative bg-cover bg-center bg-no-repeat" style="background-image: url('h
               <div class="flex items-center">
                 <form method="post" action="{{ url_for('map_page') }}">
                   <input type="hidden" name="address" value={{item[2]}}>
+                  <input type="hidden" name="pname" value={{item[1]}}>
                   <button type="submit" name="mid" value={{item[0]}} class="text-blue-600 font-bold hover:underline hover:text-blue-800" >view</button>
                 </form>
               </div>
