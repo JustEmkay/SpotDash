@@ -622,7 +622,10 @@ def delete_account_m():
             conn.close()
             session.pop('mid', None)
             session.pop('mname',None)
-            return render_template('success.html') 
+            flash(f"Account Deleted successfully.")
+
+            return redirect(url_for('index'))
+            # return render_template('success.html') 
     return render_template('manager/delete.html')
 
 
@@ -643,7 +646,10 @@ def delete_account():
             conn.commit()
             conn.close()
             session.pop('username', None)
-            return render_template('success.html') 
+            flash(f"Account Deleted successfully.")
+
+            return redirect(url_for('index'))
+            # return render_template('success.html') 
     return render_template('users/delete.html')
 
 def allowed_file(filename):

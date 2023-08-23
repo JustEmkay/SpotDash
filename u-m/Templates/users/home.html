@@ -69,9 +69,13 @@ class="relative bg-cover bg-center bg-no-repeat" style="background-image: url('h
           </div>
         </form>
           <div class="border-2 p-4 h-5/10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 ">
+                {%if not items:%}
+                  <p class="font-bold text-red-800 text-2xl">no available parking near you , set filter to zero to view all parkings.</p>
+                {%endif%}
             {% for item in items %}
             <div class="bg-white flex justify-between border border-4 border-blue-600 w-auto lg:w-96 rounded-2xl h-24 p-4">
               <!-- Content for the first column -->
+
               <div class="">
                 <p class="font-bold text-2xl">{{ item[1] }}</p>
                 <pre>within <b>{{ item[5] }}Km</b> radius</pre>
